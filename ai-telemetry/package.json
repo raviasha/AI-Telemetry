@@ -1,0 +1,54 @@
+{
+  "name": "ai-telemetry",
+  "displayName": "AI Telemetry",
+  "description": "Captures metadata about AI chat interactions in VS Code",
+  "version": "0.1.0",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.94.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "AI Telemetry",
+      "properties": {
+        "aiTelemetry.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable AI interaction telemetry logging."
+        },
+        "aiTelemetry.logPath": {
+          "type": "string",
+          "default": "",
+          "description": "Directory for log files. Defaults to ~/.ai-telemetry/logs if empty."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "aiTelemetry.openLogs",
+        "title": "AI Telemetry: Open Logs Folder"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "parity:report": "node ./scripts/parity-report.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.94.0",
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "@vscode/vsce": "^3.9.1"
+  }
+}

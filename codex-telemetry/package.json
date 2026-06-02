@@ -1,0 +1,23 @@
+{
+  "name": "codex-telemetry",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Standalone Codex desktop telemetry daemon",
+  "main": "out/index.js",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "start": "node ./out/index.js",
+    "build:start": "npm run compile && npm run start",
+    "health": "node ./scripts/health-report.mjs",
+    "launchd:install": "npm run compile && node ./scripts/install-launchd.mjs",
+    "launchd:uninstall": "node ./scripts/uninstall-launchd.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  }
+}

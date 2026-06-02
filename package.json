@@ -1,0 +1,16 @@
+{
+  "name": "ai-telemetry-toolkit",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "ai-telemetry",
+    "codex-telemetry",
+    "telemetry-insights"
+  ],
+  "scripts": {
+    "build": "npm -w ai-telemetry run compile && npm -w codex-telemetry run compile && npm -w telemetry-insights run compile",
+    "insights": "npm -w telemetry-insights run report",
+    "insights:ui": "npm -w telemetry-insights run ui",
+    "ui": "npm run insights:ui"
+  }
+}

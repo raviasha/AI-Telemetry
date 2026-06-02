@@ -1,0 +1,20 @@
+{
+  "name": "telemetry-insights",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lightweight insights generator for ai-telemetry JSONL logs",
+  "main": "out/index.js",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "start": "node ./out/index.js",
+    "report": "npm run compile && node ./out/index.js",
+    "ui": "npm run compile && node ./out/index.js --ui-out ./reports/dashboard.html"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  }
+}

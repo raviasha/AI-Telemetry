@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+out/
+dist/
+*.log
+npm-debug.log*
+
+# VS Code
+.vscode/
+
+# Env
+.env
+.env.*
+
+# Generated reports
+telemetry-insights/reports/*.md
+telemetry-insights/reports/
+
+# Archives
+*.zip
+*.sha256
+*.vsix
