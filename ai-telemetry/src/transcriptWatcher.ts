@@ -12,6 +12,28 @@ let pollTimer: ReturnType<typeof setInterval> | undefined;
 
 const POLL_INTERVAL_MS = 2000;
 
+function getCodexSessionRoots(): string[] {
+    const configured = (process.env.CODEX_SESSION_ROOT ?? '').trim();
+    if (configured) {
+        return [configured];
+    }
+
+    const home = os.homedir();
+    const xdgDataHome = (process.env.XDG_DATA_HOME ?? '').trim();
+    const roots = [
+        path.join(home, '.codex', 'sessions'),
+        path.join(home, 'Library', 'Application Support', 'Codex', 'sessions'),
+        path.join(home, 'Library', 'Application Support', 'com.openai.codex', 'sessions'),
+        path.join(home, 'Library', 'Application Support', 'com.openai.codex-desktop', 'sessions')
+    ];
+
+    if (xdgDataHome) {
+        roots.push(path.join(xdgDataHome, 'codex', 'sessions'));
+    }
+
+    return Array.from(new Set(roots));
+}
+
 // Discover known workspaceStorage roots for supported editors.
 function getWorkspaceStorageBases(): string[] {
     const home = os.homedir();
@@ -104,8 +126,11 @@ async function listSourceFiles(): Promise<string[]> {
         }
     }
 
-    const codexSessionRoot = path.join(os.homedir(), '.codex', 'sessions');
-    all.push(...await listJsonlRecursively(codexSessionRoot));
+    const codexRoots = getCodexSessionRoots();
+    const codexFilesByRoot = await Promise.all(codexRoots.map(async root => listJsonlRecursively(root)));
+    for (const files of codexFilesByRoot) {
+        all.push(...files);
+    }
 
     return Array.from(new Set(all));
 }
@@ -184,7 +209,11 @@ async function tailFile(filePath: string): Promise<void> {
 }
 
 function isCodexSessionFile(filePath: string): boolean {
-    return filePath.includes(`${path.sep}.codex${path.sep}sessions${path.sep}`);
+    const normalizedFilePath = path.resolve(filePath);
+    return getCodexSessionRoots().some((root) => {
+        const normalizedRoot = path.resolve(root);
+        return normalizedFilePath === normalizedRoot || normalizedFilePath.startsWith(`${normalizedRoot}${path.sep}`);
+    });
 }
 
 function detectAssistantClient(filePath: string): AssistantClient {

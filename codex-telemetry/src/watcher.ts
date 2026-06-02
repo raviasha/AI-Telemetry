@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { getCodexSessionRoot, getPollIntervalMs } from './config';
+import { getCodexSessionRoots, getPollIntervalMs } from './config';
 import { clearCodexSession, processCodexLine } from './codexParser';
 
 const fileOffsets = new Map<string, number>();
@@ -41,7 +41,17 @@ async function pollCodexSessions(): Promise<void> {
 }
 
 async function listCodexFiles(): Promise<string[]> {
-    return listJsonlRecursively(getCodexSessionRoot());
+    const out = new Set<string>();
+    const roots = getCodexSessionRoots();
+
+    const byRoot = await Promise.all(roots.map(async root => listJsonlRecursively(root)));
+    for (const paths of byRoot) {
+        for (const filePath of paths) {
+            out.add(filePath);
+        }
+    }
+
+    return Array.from(out);
 }
 
 async function listJsonlRecursively(root: string): Promise<string[]> {

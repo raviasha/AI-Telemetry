@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 
@@ -37,5 +38,50 @@ export function getCodexSessionRoot(): string {
     if (configured) {
         return configured;
     }
-    return path.join(os.homedir(), '.codex', 'sessions');
+
+    const roots = getDefaultCodexSessionRootCandidates();
+    for (const candidate of roots) {
+        try {
+            if (fs.existsSync(candidate)) {
+                return candidate;
+            }
+        } catch {
+            // Ignore invalid/inaccessible paths.
+        }
+    }
+
+    // Keep legacy default behavior if no candidate path exists yet.
+    return roots[0];
+}
+
+export function getCodexSessionRoots(): string[] {
+    const configured = (process.env.CODEX_SESSION_ROOT ?? '').trim();
+    if (configured) {
+        return [configured];
+    }
+
+    const unique = new Set<string>();
+    for (const candidate of getDefaultCodexSessionRootCandidates()) {
+        unique.add(candidate);
+    }
+
+    return Array.from(unique);
+}
+
+function getDefaultCodexSessionRootCandidates(): string[] {
+    const home = os.homedir();
+    const xdgDataHome = (process.env.XDG_DATA_HOME ?? '').trim();
+
+    const candidates = [
+        path.join(home, '.codex', 'sessions'),
+        path.join(home, 'Library', 'Application Support', 'Codex', 'sessions'),
+        path.join(home, 'Library', 'Application Support', 'com.openai.codex', 'sessions'),
+        path.join(home, 'Library', 'Application Support', 'com.openai.codex-desktop', 'sessions')
+    ];
+
+    if (xdgDataHome) {
+        candidates.push(path.join(xdgDataHome, 'codex', 'sessions'));
+    }
+
+    return candidates;
 }

@@ -4,7 +4,7 @@ Standalone telemetry daemon for Codex desktop sessions.
 
 ## What it does
 
-- Watches Codex session files under `~/.codex/sessions/**/*.jsonl`
+- Watches Codex session files under discovered session roots (defaults include `~/.codex/sessions/**/*.jsonl`)
 - Parses interactions and tool activity
 - Emits telemetry events using schema version `4.0`
 - Writes JSONL logs to the same master log path used by the VS Code/Cursor extension by default
@@ -55,8 +55,16 @@ Environment variables:
 
 - `AI_TELEMETRY_LOG_PATH`: base log path (default `~/.ai-telemetry/logs`)
 - `AI_TELEMETRY_LOG_MODE`: `shared` (default) or `separate`
-- `CODEX_SESSION_ROOT`: Codex session root (default `~/.codex/sessions`)
+- `CODEX_SESSION_ROOT`: explicit Codex session root override
 - `CODEX_TELEMETRY_POLL_MS`: polling interval in ms (default `2000`, min `500`)
+
+Session root auto-discovery (when `CODEX_SESSION_ROOT` is not set):
+
+- `~/.codex/sessions`
+- `~/Library/Application Support/Codex/sessions`
+- `~/Library/Application Support/com.openai.codex/sessions`
+- `~/Library/Application Support/com.openai.codex-desktop/sessions`
+- `$XDG_DATA_HOME/codex/sessions` (if `XDG_DATA_HOME` is set)
 
 ### Shared vs Separate logs
 
