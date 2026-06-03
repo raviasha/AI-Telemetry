@@ -34,6 +34,10 @@
       {
         "command": "aiTelemetry.openLogs",
         "title": "AI Telemetry: Open Logs Folder"
+      },
+      {
+        "command": "aiTelemetry.showInsights",
+        "title": "AI Telemetry: Show Insights"
       }
     ]
   },
